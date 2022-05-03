@@ -27,13 +27,20 @@ class QuizPage extends StatefulWidget {
 
 class _QuizPageState extends State<QuizPage> {
   List<Icon> scoreKeeper = [];
-  List<String> questions = [
+  /*List<String> questions = [
     'You can lead a cow down stairs but not up stairs.',
     'Approximately one quarter of human bones are in the feet.',
     'A slug\'s blood is green.'
   ];
-  List<bool> answers = [true, false, true];
+  List<bool> answers = [true, false, true];*/
 
+  List<Question> questionBank = [
+    Question(q: 'You can lead a cow down stairs but not up stairs.', a: true),
+    Question(
+        q: 'Approximately one quarter of human bones are in the feet.',
+        a: false),
+    Question(q: 'A slug\'s blood is green.', a: true)
+  ];
   int questionNumber = 0;
   int nexQuestion = 0;
 
@@ -51,7 +58,7 @@ class _QuizPageState extends State<QuizPage> {
               child: Text(
                 (questionNumber + 1).toString() +
                     '. ' +
-                    questions[questionNumber],
+                    questionBank[questionNumber].questionText,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 25.0,
@@ -76,9 +83,9 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
                 //The user picked true.
-                int questionLength = questions.length;
+
                 setState(() {
-                  if (answers[questionNumber] == true) {
+                  if (questionBank[questionNumber].questionAnswer == true) {
                     scoreKeeper.add(
                       Icon(
                         Icons.check,
@@ -112,10 +119,9 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                int questionLength = questions.length;
                 //The user picked false.
                 setState(() {
-                  if (answers[questionNumber] == false) {
+                  if (questionBank[questionNumber].questionAnswer == false) {
                     scoreKeeper.add(
                       Icon(
                         Icons.check,
