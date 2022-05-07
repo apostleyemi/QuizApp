@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'question.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
+import 'question_repo.dart';
 
 void main() => runApp(Quizzler());
 
@@ -34,15 +35,40 @@ class _QuizPageState extends State<QuizPage> {
   ];
   List<bool> answers = [true, false, true];*/
 
-  List<Question> questionBank = [
-    Question(q: 'You can lead a cow down stairs but not up stairs.', a: true),
-    Question(
-        q: 'Approximately one quarter of human bones are in the feet.',
-        a: false),
-    Question(q: 'A slug\'s blood is green.', a: true)
-  ];
-  int questionNumber = 0;
   int nexQuestion = 0;
+  QuestionRepo questionRepo = QuestionRepo();
+
+  void checkAnswer(bool userPickedAnswer) {
+    bool correctAnswer = questionRepo.getCorrectAnswer();
+    setState(() {
+      if (questionRepo.isFinished() == true) {
+        Alert(
+                context: context,
+                title: "End of Quiz",
+                desc: "You have reach the end of the quiz.")
+            .show();
+        //reset Question
+        questionRepo.resetQuestion();
+        //resent the scoreKeeper
+        scoreKeeper = [];
+      } else if (correctAnswer == userPickedAnswer) {
+        scoreKeeper.add(
+          Icon(
+            Icons.check,
+            color: Colors.green,
+          ),
+        );
+      } else {
+        scoreKeeper.add(
+          Icon(
+            Icons.close,
+            color: Colors.red,
+          ),
+        );
+      }
+      questionRepo.nextQuestion();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,9 +82,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-                (questionNumber + 1).toString() +
-                    '. ' +
-                    questionBank[questionNumber].questionText,
+                questionRepo.getQuetionText(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 25.0,
@@ -82,26 +106,9 @@ class _QuizPageState extends State<QuizPage> {
                 ),
               ),
               onPressed: () {
-                //The user picked true.
+                checkAnswer(true);
 
-                setState(() {
-                  if (questionBank[questionNumber].questionAnswer == true) {
-                    scoreKeeper.add(
-                      Icon(
-                        Icons.check,
-                        color: Colors.green,
-                      ),
-                    );
-                  } else {
-                    scoreKeeper.add(
-                      Icon(
-                        Icons.close,
-                        color: Colors.red,
-                      ),
-                    );
-                  }
-                  questionNumber++;
-                });
+                //The user picked true.
               },
             ),
           ),
@@ -120,24 +127,8 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
                 //The user picked false.
-                setState(() {
-                  if (questionBank[questionNumber].questionAnswer == false) {
-                    scoreKeeper.add(
-                      Icon(
-                        Icons.check,
-                        color: Colors.green,
-                      ),
-                    );
-                  } else {
-                    scoreKeeper.add(
-                      Icon(
-                        Icons.close,
-                        color: Colors.red,
-                      ),
-                    );
-                  }
-                  questionNumber++;
-                });
+
+                checkAnswer(false);
               },
             ),
           ),
